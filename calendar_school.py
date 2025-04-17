@@ -79,9 +79,9 @@ if formatted_date:
 # Задаем фигуры для покрытия
 from pprint import pprint
 
-from X.dancing import DLX, show
-from X.xl import *
-from X.board import Figure, generate_column_names, Board, generate_matrix
+from dancing import DLX, show
+from xl import *
+from board import Figure, generate_column_names, Board, generate_matrix
 
 f1 = Figure(['L', (0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1)])
 f2 = Figure(['P', (0, 0), (0, 1), (0, 2), (0, 3), (1, 0), (1, 1)])
@@ -100,7 +100,7 @@ for fig in figures:
 
 # Создаем доску некоторой формы, вырезая ненужные клетки из прямоугольника
 b = Board(5, 10)
-date_string = '2025-04-15'
+date_string = '2025-04-17'
 formatted_date = format_date_ru(date_string)
 for cell in formatted_date:
     b.flip(calendar_cells[cell])

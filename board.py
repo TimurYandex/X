@@ -1,9 +1,9 @@
 from collections import defaultdict
 from pprint import pprint
 
-from X.dancing import DLX, show
+from dancing import DLX, show
 
-from X.xl import find_unique_matrices, create_colored_excel, solution2matrix
+from xl import find_unique_matrices, create_colored_excel, solution2matrix
 
 
 class Figure:
