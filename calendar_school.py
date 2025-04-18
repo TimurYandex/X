@@ -1,44 +1,36 @@
-import csv
 import datetime
+import json
+from pprint import pprint
 
 
-def create_dict_from_csv(filename):
-    """
-    Creates a dictionary from a CSV file where the first element of each row
-    is the key, and the second and third elements form a tuple of integers as the value.
-
-    Args:
-        filename (str): The name of the CSV file.
-
-    Returns:
-        dict: A dictionary created from the CSV file.
-    """
+def create_dict_from_str(cal):
     data_dict = {}
-    try:
-        with open(filename, 'r') as csvfile:
-            reader = csv.reader(csvfile)
-            next(reader, None)  # Skip the header row.
-            for row in reader:
-                if len(row) == 3:
-                    key = row[0]
-                    try:
-                        value = (int(row[1]), int(row[2]))
-                        data_dict[key] = value
-                    except ValueError:
-                        print(f"Warning: Could not convert values to integers in row: {row}")
-                else:
-                    print(f"Warning: Skipping row with incorrect number of elements: {row}")
-    except FileNotFoundError:
-        print(f"Error: File not found: {filename}")
-        return None
+    for line in cal.split():
+        row = line.split(',')
+        if len(row) == 3:
+            key = row[0]
+            try:
+                value = (int(row[1]), int(row[2]))
+                data_dict[key] = value
+            except ValueError:
+                print(f"Warning: Could not convert values to integers in row: {row}")
+        else:
+            print(f"Warning: Skipping row with incorrect number of elements: {row}")
     return data_dict
 
 
-filename = 'school_calendar.csv'
-calendar_cells = create_dict_from_csv(filename)
+def read_dict_json(filename: str):
+    with open(filename + ('.json' if filename[-5:] != '.json' else ''), encoding='UTF8') as f:
+        cal = {a: tuple(b) for a, b in json.loads(f.read()).items()}
+    return cal
 
-if calendar_cells:
-    print(calendar_cells)
+
+def save_dict_json(filename: str):
+    with open(filename + ('.json' if filename[-5:] != '.json' else ''), 'w', encoding='UTF8') as f:
+        f.write(json.dumps(calendar_cells, ensure_ascii=False, indent=4))
+
+
+calendar_cells = read_dict_json('calendar')
 
 
 def format_date_ru(date_str):
@@ -53,6 +45,7 @@ def format_date_ru(date_str):
                day (string), and month (short format in Russian).
                Returns None if the input date is invalid.
     """
+
     try:
         date_obj = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
         weekday = date_obj.strftime('%w')  # 0 is Sunday, 1 is Monday, ..., 6 is Saturday
@@ -73,12 +66,7 @@ def format_date_ru(date_str):
 date_string = '2024-01-29'
 formatted_date = format_date_ru(date_string)
 
-if formatted_date:
-    print(formatted_date)
-
 # Задаем фигуры для покрытия
-from pprint import pprint
-
 from dancing import DLX, show
 from xl import *
 from board import Figure, generate_column_names, Board, generate_matrix
@@ -100,19 +88,17 @@ for fig in figures:
 
 # Создаем доску некоторой формы, вырезая ненужные клетки из прямоугольника
 b = Board(5, 10)
-date_string = '2025-04-17'
+date_string = '2025-04-18'
 formatted_date = format_date_ru(date_string)
 for cell in formatted_date:
     b.flip(calendar_cells[cell])
-print(b)
+
 
 # Список заголовков столбцов, где часть - клетки поля, а часть - уникальные типы фигурок
 column_names = generate_column_names(b, f_vars)
-print(column_names)
 
 # создаем матрицу всех строк, соответствующих уникальным расположениям фигурок на поле
 matrix = generate_matrix(b, f_vars, column_names)
-pprint(matrix)
 
 dlx = DLX(matrix, column_names)
 all_solutions = dlx.solve()
