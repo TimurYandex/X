@@ -59,7 +59,7 @@ class Board:
         self.allowed = defaultdict(lambda: 0, {(i, j): 1 for j in range(w) for i in range(h)})
 
     def __repr__(self):
-        return "\n".join([" ".join([self.matrix[i][j] if self.allowed[(i, j)] else '...' for j in
+        return "\n".join([" ".join([self.matrix[i][j] if self.allowed[(i, j)] else ' ... ' for j in
                                     range(len(self.matrix[0]))]) for i in range(len(self.matrix))]) + "\n"
 
     def flip(self, coord1, coord2=None):
@@ -141,16 +141,13 @@ if __name__ == "__main__":
     print(b)
 
     # Создаем доску некоторой формы, вырезая ненужные клетки из прямоугольника
-    b = Board(4, 4)
-    b.flip(2, 2)
-    b.flip(1, 1)
-    b.flip(1, 2)
-    b.flip(2, 1)
+    b = Board(2, 2)
+    b.flip(0, 0)
     print(b)
 
     # Задаем фигуры для покрытия
     figures = []
-    figure1 = Figure(['L', (0, 0), (0, 1), (1, 1)])
+    figure1 = Figure(['L', (1, 0), (0, 1), (1, 1)])
     ...
     figures.append(figure1)
     # и для каждой фигуры получаем ее варианты и добавляем в общий словарь вариантов

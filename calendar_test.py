@@ -1,58 +1,16 @@
-import csv
 import datetime
 import json
 from pprint import pprint
 
-n_h_w = '''пн,0,8
-вт,0,9
-ср,1,9
-чт,2,9
-пт,3,9
-сб,4,9
-вс,4,8
-янв,0,0
-фев,0,1
-мар,0,2
-апр,0,3
-май,0,4
-июн,0,5
-июл,4,0
-авг,4,1
-сен,4,2
-окт,4,3
-ноя,4,4
-дек,4,5
-1,0,6
-2,0,7
-3,1,0
-4,1,1
-5,1,2
-6,1,3
-7,1,4
-8,1,5
-9,1,6
-10,1,7
-11,1,8
-12,2,0
-13,2,1
-14,2,2
-15,2,3
-16,2,4
-17,2,5
-18,2,6
-19,2,7
-20,2,8
-21,3,0
-22,3,1
-23,3,2
-24,3,3
-25,3,4
-26,3,5
-27,3,6
-28,3,7
-29,3,8
-30,4,6
-31,4,7'''
+n_h_w = '''пн,1,1
+вт,0,1
+ср,0,2
+чт,1,0
+пт,0,0
+сб,1,2
+вс,2,0
+21,3,1
+апр,3,2'''
 
 
 
@@ -71,6 +29,7 @@ def create_dict_from_str(cal):
             print(f"Warning: Skipping row with incorrect number of elements: {row}")
     return data_dict
 
+
 n_h_w_dict = create_dict_from_str(n_h_w)
 
 
@@ -80,13 +39,15 @@ def read_dict_json(filename: str):
     return cal
 
 
-def save_dict_json(filename: str, calendar_cells:dict):
+def save_dict_json(filename: str, calendar_cells: dict):
     with open(filename + ('.json' if filename[-5:] != '.json' else ''), 'w', encoding='UTF8') as f:
         f.write(json.dumps(calendar_cells, ensure_ascii=False, indent=4))
 
-save_dict_json('calendar_school', n_h_w_dict)
 
-calendar_cells = read_dict_json('calendar_school')
+save_dict_json('calendar_test', n_h_w_dict)
+
+calendar_cells = read_dict_json('calendar_test')
+pprint(calendar_cells)
 
 
 def format_date_ru(date_str):
@@ -112,7 +73,7 @@ def format_date_ru(date_str):
         month_names = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек']
         month_ru = month_names[int(month) - 1]
 
-        return (weekday_ru, day, month_ru)
+        return weekday_ru, day, month_ru
     except ValueError:
         print("Invalid date format. Please use YYYY-MM-DD.")
         return None
@@ -123,15 +84,12 @@ from dancing import DLX, show
 from xl import *
 from board import Figure, generate_column_names, Board, generate_matrix
 
-f1 = Figure(['L', (0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1)])
-f2 = Figure(['P', (0, 0), (0, 1), (0, 2), (0, 3), (1, 0), (1, 1)])
-f3 = Figure(['F', (0, 0), (0, 1), (0, 2), (0, 3), (1, 0), (1, 2)])
-f4 = Figure(['T', (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 1)])
-f5 = Figure(['H', (0, 0), (0, 1), (1, 1), (2, 0), (2, 1), (2, 2)])
-f6 = Figure(['S', (0, 0), (0, 1), (1, 0), (2, 0), (2, 1), (3, 1)])
-f7 = Figure(['W', (0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2)])
-f8 = Figure(['D', (0, 0), (0, 1), (0, 2), (1, 1), (1, 2)])
-figures = [f1, f2, f3, f4, f5, f6, f7, f8]
+f0 = Figure(['L', (0, 0), (0, 1), (1, 1)])
+f1 = Figure(['I', (0, 0), (0, 1), (0, 2)])
+f2 = Figure(['i', (0, 0), (0, 1)])
+
+figures = [f0, f1, f2]
+pprint(figures)
 # и для каждой фигуры получаем ее варианты и добавляем в общий словарь вариантов
 f_vars = {}
 for fig in figures:
@@ -139,26 +97,30 @@ for fig in figures:
         f_vars[variant] = fig.variants[variant]
 
 # Создаем доску некоторой формы, вырезая ненужные клетки из прямоугольника
-b = Board(5, 10)
+b = Board(3, 3)
+# # вырез снизу слева
+# for i in range(4):
+#     b.flip(7, i)
+# # вырез справа вверху
+# for i in range(2):
+#     b.flip(i, 6)
 date_string = '2025-04-21'
 formatted_date = format_date_ru(date_string)
 for cell in formatted_date:
     b.flip(calendar_cells[cell])
-
-
+print(b)
 # Список заголовков столбцов, где часть - клетки поля, а часть - уникальные типы фигурок
 column_names = generate_column_names(b, f_vars)
 print(column_names)
-
 # создаем матрицу всех строк, соответствующих уникальным расположениям фигурок на поле
 matrix = generate_matrix(b, f_vars, column_names)
 
 dlx = DLX(matrix, column_names)
 all_solutions = dlx.solve()
 unique_solutions = find_unique_matrices([solution2matrix(m) for m in show(all_solutions)])
-create_colored_excel(unique_solutions, "calendar_school.xlsx")
+create_colored_excel(unique_solutions, "calendar_test.xlsx")
 
 dlx = DLX(matrix, column_names)
 all_solutions = dlx.solve_iteratively()
 unique_solutions = find_unique_matrices([solution2matrix(m) for m in show(all_solutions)])
-create_colored_excel(unique_solutions, "calendar_school_unique.xlsx")
+create_colored_excel(unique_solutions, "calendar_test_unique.xlsx")
