@@ -27,8 +27,8 @@ def create_colored_excel(matrices, filename='output.xlsx'):
     num_colors = len(unique_letters)
     for i in range(num_colors):
         hue = i / num_colors  # Равномерное распределение оттенков
-        saturation = [0.3, 0.8, 0.8, 0.3][i % 4]  # Разная насыщенность
-        lightness = [0.3, 0.8][i % 2]  # Разная яркость
+        saturation = [0.5, 0.9, 0.9, 0.5][i % 4]  # Разная насыщенность
+        lightness = [0.4, 0.9][i % 2]  # Разная яркость
         rgb = colorsys.hls_to_rgb(hue, lightness, saturation)
         hex_color = f"{int(rgb[0] * 255):02X}{int(rgb[1] * 255):02X}{int(rgb[2] * 255):02X}"
         palette.append(hex_color)
